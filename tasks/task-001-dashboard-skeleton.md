@@ -2,10 +2,13 @@
 id: task-001-dashboard-skeleton
 title: Dashboard package skeleton + /health endpoint
 assignee: engineer
-status: in_progress
+status: completed
 priority: high
 createdAt: 2026-05-26T00:45:00Z
 startedAt: 2026-05-25T18:35:00Z
+completedAt: 2026-05-25T22:47:06Z
+pr: https://github.com/colin-prologue/AgentTest/pull/2
+mergedAs: 4556f30
 dependsOn: []
 ---
 
