@@ -2,10 +2,12 @@
 id: task-001-dashboard-skeleton
 title: Set up dashboard/ package skeleton (TypeScript + Vite + stub Node server with /health)
 assignee: engineer
-status: in_progress
+status: review_pending
 priority: high
 createdAt: 2026-05-25T00:00:00Z
 startedAt: 2026-05-25T15:50:00Z
+handoffAt: 2026-05-25T16:00:00Z
+pr: https://github.com/colin-prologue/AgentTest/pull/1
 dependsOn: []
 ---
 
