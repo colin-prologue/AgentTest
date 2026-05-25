@@ -140,9 +140,9 @@ export const REVIEWER_PROMPT = `You are a CODE REVIEWER.
    b. Get the diff. If the PR file is tasks/<task-id>-pr.md, read it. Otherwise: \`git fetch && git diff main...task/<task-id>\`.
    c. Review for: does the diff meet every acceptance criterion? bugs? security issues? unsafe input handling? missing tests? secrets accidentally committed?
    d. Write tasks/<task-id>-review.md with your findings (one section per criterion, plus any extra issues).
-   e. **Post the verdict to GitHub** (unless skipped — see below). If the task's \`pr:\` field is a GitHub URL like \`.../pull/<N>\`, extract <N> and run:
-      - Approving: \`gh pr review <N> --approve --body-file tasks/<task-id>-review.md\`
-      - Requesting changes: \`gh pr review <N> --request-changes --body-file tasks/<task-id>-review.md\`
+   e. **Post the verdict to GitHub** (unless skipped — see below). If the task's \`pr:\` field is a GitHub URL like \`.../pull/<N>\`, extract <N>. Prepend a single Markdown line to the review file body (in memory; don't edit the file on disk) of the form \`**Verdict: approved**\` or \`**Verdict: changes_requested**\`, then post as a COMMENT review (not --approve/--request-changes):
+      \`{ echo "**Verdict: approved**"; echo; cat tasks/<task-id>-review.md; } | gh pr review <N> --comment --body-file -\`
+      Why --comment and not --approve: all team agents currently run under the same GitHub account as the PR author, and GitHub forbids approving your own PR. The team treats the local task status as the authoritative verdict; the GitHub post is for human auditability. Use --comment for BOTH approve and changes_requested cases; the inline verdict line is how humans tell them apart.
       Skip this step (and add a one-line note to the task's \`## Notes\` saying why) if ANY of: \`control/no-github-review\` exists, the \`pr:\` field is a \`tasks/<id>-pr.md\` file rather than a URL, or \`gh\` is not available. A GitHub post failure must NOT block the status flip in step f/g — log it in \`## Notes\` and move on.
    f. If everything passes: update task status: approved. Note "approved by reviewer" in the task.
    g. If issues: update task status: changes_requested. Be specific in the review file — "rename X to Y at <file>:<line>" beats "this is confusing".
@@ -182,8 +182,11 @@ You are the last automated check before code lands on the team trunk. You verify
    g. **If all tests pass AND all criteria are met:**
       - Merge: \`gh pr merge <N> --squash --delete-branch\`.
       - Update local trunk: \`git checkout <baseRefName> && git pull --ff-only origin <baseRefName>\`.
-      - Write tasks/<task-id>-verified.md (what was checked + commands run + the merge SHA from \`git rev-parse HEAD\`).
-      - Update task status: completed, completedAt: <now>.
+      - Write tasks/<task-id>-verified.md on trunk (what was checked + exact commands run + the merge SHA from \`git rev-parse HEAD\`).
+      - Edit tasks/<task-id>.md on trunk to set status: completed and add completedAt: <now>. (The squash merge captured the engineer's pre-merge \`in_progress\` state — the status flip is YOUR responsibility, not part of the merge.)
+      - **Commit and push the bookkeeping to trunk** — this is required, not optional. Without it, the PM and engineer never see task completion and Layer N+1 won't unblock:
+        \`git add tasks/<task-id>-verified.md tasks/<task-id>.md && git commit -m "chore(<task-id>): mark completed, tester-verified (merge <short-sha>)" && git push origin <baseRefName>\`
+      - **Idempotency.** If you arrive at a task whose PR is already MERGED (state field) AND status is already \`completed\` AND verified.md exists — it's already done; skip. If any of those three is missing but the PR is merged, complete ONLY the missing pieces (don't re-merge).
    h. **If tests fail or a criterion is unmet:**
       - File a bug: write tasks/bug-<task-id>.md with reproduction steps, expected vs actual, and exact failing output.
       - **Do NOT merge.** Flip the task status: changes_requested so the engineer picks it back up (the bug file tells them what to fix).
