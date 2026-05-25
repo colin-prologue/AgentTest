@@ -1,0 +1,14 @@
+node_modules/
+
+# Runtime state — these are produced by running the agents and should not be committed.
+events/*.jsonl
+events/blobs/
+agents-state/*.session
+control/pause-*
+status.md
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
+*.swp

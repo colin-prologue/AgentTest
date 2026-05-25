@@ -1,0 +1,29 @@
+{
+  "name": "agent-team-bootstrap",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Minimal harness for a PM/Engineer/Reviewer/Tester multi-agent team with filesystem coordination and JSONL event capture.",
+  "scripts": {
+    "agent:pm": "tsx agents/pm.ts",
+    "agent:engineer": "tsx agents/engineer.ts",
+    "agent:reviewer": "tsx agents/reviewer.ts",
+    "agent:tester": "tsx agents/tester.ts",
+    "tail": "bash scripts/tail.sh",
+    "tail:pretty": "bash scripts/tail-pretty.sh",
+    "supervise": "tsx scripts/supervise.ts",
+    "reset:sessions": "rm -f agents-state/*.session && echo 'cleared session ids'",
+    "reset:events": "rm -f events/*.jsonl events/blobs/* && echo 'cleared event log'"
+  },
+  "dependencies": {
+    "@anthropic-ai/claude-agent-sdk": "latest"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "tsx": "^4.7.0",
+    "typescript": "^5.3.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
