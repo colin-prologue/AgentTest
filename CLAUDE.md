@@ -4,7 +4,12 @@ Project context for any Claude Code session working in this repo. Keep it concis
 
 ## What this is
 
-A bootstrap harness for an autonomous engineering team of four agents (PM, Engineer, Reviewer, Tester) coordinating via a filesystem task board. Each agent is a Node process running `@anthropic-ai/claude-agent-sdk` in a `while(true)` loop with `resume: sessionId` so it has memory across ticks. See `README.md` for the operator guide.
+A bootstrap harness for an autonomous engineering team of four agents (PM, Engineer, Reviewer, Tester) coordinating via a filesystem task board. Each agent is a Node process running `@anthropic-ai/claude-agent-sdk` in a `while(true)` loop with `resume: sessionId` so it has memory across ticks.
+
+- `README.md` — operator guide (how to run, monitor, control)
+- `docs/architecture.md` — mental model: agent loop, coordination, hooks, why we chose this shape
+- `docs/roadmap.md` — phases, open questions, decisions already made (don't relitigate without reason)
+- `design/dashboard.md` — the active initiative's spec
 
 ## What the team is currently building
 
