@@ -11,7 +11,8 @@ const DANGEROUS_BASH = [
   /\bsudo\b/,
   /\bgit\s+push[^|;]*--force/,
   /\bgit\s+reset\s+--hard\b.*\b(main|master|origin\/main|origin\/master)\b/,
-  /\bgit\s+push\b[^|;]*\b(main|master)\b/, // never push directly to main/master
+  /\bgit\s+push\b[^|;]*\b(main|master)\b/, // explicit guard: never push directly to main/master (redundant with the allowlist below, kept for clarity)
+  /\bgit\s+push\b[^|;]*\borigin\s+(?:[^|;\s]*:)?(?!task\/)[\w./-]+/, // engineers may only push to task/* branches on origin; trunk, feature/*, deletions, HEAD:other are denied. Tester lands trunk changes via `gh pr merge` (server-side), not `git push`.
   /\bgh\s+pr\s+merge\b[^|;]*--base\s+(main|master)\b/, // never auto-merge into real main/master via gh
   /\bgh\s+pr\s+merge\b[^|;]*--admin\b/, // never bypass branch protection
   /curl[^|]*\|\s*(bash|sh|zsh)/,
