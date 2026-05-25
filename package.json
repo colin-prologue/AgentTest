@@ -4,6 +4,9 @@
   "private": true,
   "type": "module",
   "description": "Minimal harness for a PM/Engineer/Reviewer/Tester multi-agent team with filesystem coordination and JSONL event capture.",
+  "workspaces": [
+    "dashboard"
+  ],
   "scripts": {
     "agent:pm": "tsx agents/pm.ts",
     "agent:engineer": "tsx agents/engineer.ts",
@@ -12,6 +15,7 @@
     "tail": "bash scripts/tail.sh",
     "tail:pretty": "bash scripts/tail-pretty.sh",
     "supervise": "tsx scripts/supervise.ts",
+    "dashboard:dev": "tsx dashboard/src/server/index.ts",
     "reset:sessions": "rm -f agents-state/*.session && echo 'cleared session ids'",
     "reset:events": "rm -f events/*.jsonl events/blobs/* && echo 'cleared event log'"
   },

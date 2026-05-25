@@ -7,6 +7,9 @@ agents-state/*.session
 control/pause-*
 status.md
 
+# Dashboard build artifacts
+dashboard/dist/
+
 # OS / editor
 .DS_Store
 .idea/
