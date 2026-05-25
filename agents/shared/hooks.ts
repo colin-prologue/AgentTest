@@ -12,6 +12,8 @@ const DANGEROUS_BASH = [
   /\bgit\s+push[^|;]*--force/,
   /\bgit\s+reset\s+--hard\b.*\b(main|master|origin\/main|origin\/master)\b/,
   /\bgit\s+push\b[^|;]*\b(main|master)\b/, // never push directly to main/master
+  /\bgh\s+pr\s+merge\b[^|;]*--base\s+(main|master)\b/, // never auto-merge into real main/master via gh
+  /\bgh\s+pr\s+merge\b[^|;]*--admin\b/, // never bypass branch protection
   /curl[^|]*\|\s*(bash|sh|zsh)/,
   /:\(\)\s*\{.*\};/, // fork bomb
   />\s*\/dev\/sd[a-z]/,

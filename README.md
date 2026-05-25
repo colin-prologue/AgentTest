@@ -10,6 +10,21 @@ The first initiative the team is set up to tackle (`goals/active.md`) is **build
 
 Each agent is a Node process running an infinite loop. Every loop iteration calls `query()` from `@anthropic-ai/claude-agent-sdk` with `resume: <session_id>`, so the agent has full memory across ticks. Coordination is via the filesystem (`goals/`, `tasks/`, `status.md`). Observation is via a shared hook bundle that emits structured JSONL to `events/<agent>.jsonl` on every tool call, session start/stop, and decision. The hook bundle also blocks obviously-dangerous shell commands as a safety net.
 
+## Autonomy model: team trunk vs real main
+
+The team owns a **trunk branch** (the base branch of engineer PRs in this repo). The closed loop is:
+
+1. Engineer pushes to `task/<id>`, opens a PR targeting trunk → `review_pending`
+2. Reviewer reviews against acceptance criteria, posts verdict locally and on GitHub → `approved` or `changes_requested`
+3. Tester verifies on the PR branch and, if green, **merges the PR to trunk itself** → `completed`. If red, files a bug and flips back to `changes_requested`.
+4. PM each tick reconciles new human PR comments into task `## Notes` so humans can steer without pausing the team.
+
+Humans gate `trunk → real main` at layer or feature boundaries — not every PR. Safeguards:
+
+- Tester refuses to merge any PR whose base is literally `main` or `master`.
+- Hook denylist blocks `gh pr merge --base main|master` and `--admin` regardless.
+- Engineer/reviewer prompts forbid pushing to `main`/`master`; the hook backs that up.
+
 ---
 
 ## Prerequisites
@@ -87,7 +102,7 @@ Within a few minutes of the Engineer being up:
 - Code is committed
 - Either a PR opens (if GitHub MCP is configured) or `tasks/<id>-pr.md` is written
 
-Then Reviewer reviews, Tester verifies after merge, PM updates the plan. Loop.
+Then Reviewer reviews and posts a verdict (locally + on GitHub by default). Tester verifies the PR branch and — if green — merges it to trunk itself. PM updates the plan and reconciles any new human PR comments. Loop.
 
 ---
 
@@ -107,6 +122,13 @@ Then Reviewer reviews, Tester verifies after merge, PM updates the plan. Loop.
 touch control/pause-engineer    # engineer will idle on next tick
 rm control/pause-engineer       # resume
 ```
+
+### Control flags
+
+| Flag | Effect |
+|---|---|
+| `control/pause-<agent>` | Agent idles on next tick (no `query()` call) |
+| `control/no-github-review` | Reviewer skips posting verdicts to GitHub PRs (local review file + task-status flip still happen) |
 
 ### Inject a steering note for a task
 
@@ -144,10 +166,11 @@ Then follow **Option A** above — open five terminals and run the per-agent com
 
 ## Safety
 
-- All agents run with `permissionMode: "bypassPermissions"` so they can work unattended. The safety net is the `PreToolUse` hook in `agents/shared/hooks.ts`, which denies obviously-dangerous Bash patterns (rm -rf /, sudo, force-push to main, etc.).
+- All agents run with `permissionMode: "bypassPermissions"` so they can work unattended. The safety net is the `PreToolUse` hook in `agents/shared/hooks.ts`, which denies obviously-dangerous Bash patterns (rm -rf /, sudo, force-push to main, `gh pr merge --base main|master`, `gh pr merge --admin`, etc.).
+- The tester has merge authority for the team trunk only. It refuses to merge any PR whose base is `main` or `master`, and the hook layer denies merge commands aimed at those branches even if the prompt drifts.
 - The engineer is prompted to never push to `main` or `master` — and the safety hook backs that up.
 - All agent activity is logged. If something goes wrong, `events/*.jsonl` and `events/blobs/` are the audit trail.
-- Until the dashboard's interrupt API is built (Layer 6 of the active goal), your kill switches are: the pause file, Ctrl-C, and `git reset --hard origin/main` on any task branch the engineer makes a mess of.
+- Until the dashboard's interrupt API is built (Layer 6 of the active goal), your kill switches are: the pause file, Ctrl-C, and `git reset --hard origin/<trunk>` on any task branch the engineer makes a mess of.
 
 ---
 
