@@ -9,6 +9,7 @@
     "agent:engineer": "tsx agents/engineer.ts",
     "agent:reviewer": "tsx agents/reviewer.ts",
     "agent:tester": "tsx agents/tester.ts",
+    "dashboard:dev": "tsx dashboard/src/server/index.ts",
     "tail": "bash scripts/tail.sh",
     "tail:pretty": "bash scripts/tail-pretty.sh",
     "supervise": "tsx scripts/supervise.ts",
