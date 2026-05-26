@@ -7,6 +7,10 @@ agents-state/*.session
 control/pause-*
 status.md
 
+# Dashboard runtime
+dashboard/data/
+dashboard/dist/
+
 # OS / editor
 .DS_Store
 .idea/
