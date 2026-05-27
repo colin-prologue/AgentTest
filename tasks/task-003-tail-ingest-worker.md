@@ -2,9 +2,10 @@
 id: task-003-tail-ingest-worker
 title: Tail-ingest worker with offset resume
 assignee: engineer
-status: unstarted
+status: in_progress
 priority: high
 createdAt: 2026-05-26T00:45:00Z
+startedAt: 2026-05-27T00:15:00Z
 dependsOn: [task-002-sqlite-events-schema]
 ---
 
