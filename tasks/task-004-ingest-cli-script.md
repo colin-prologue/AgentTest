@@ -2,9 +2,10 @@
 id: task-004-ingest-cli-script
 title: npm run dashboard:ingest CLI + idempotency proof
 assignee: engineer
-status: unstarted
+status: in_progress
 priority: high
 createdAt: 2026-05-26T00:45:00Z
+startedAt: 2026-05-27T00:25:00Z
 dependsOn: [task-003-tail-ingest-worker]
 ---
 
