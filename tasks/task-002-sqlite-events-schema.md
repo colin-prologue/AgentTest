@@ -2,9 +2,10 @@
 id: task-002-sqlite-events-schema
 title: SQLite schema + db.ts module for AgentEvent
 assignee: engineer
-status: unstarted
+status: in_progress
 priority: high
 createdAt: 2026-05-26T00:45:00Z
+startedAt: 2026-05-25T22:50:00Z
 dependsOn: [task-001-dashboard-skeleton]
 ---
 
