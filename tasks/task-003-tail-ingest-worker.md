@@ -2,10 +2,12 @@
 id: task-003-tail-ingest-worker
 title: Tail-ingest worker with offset resume
 assignee: engineer
-status: in_progress
+status: completed
 priority: high
 createdAt: 2026-05-26T00:45:00Z
 startedAt: 2026-05-27T00:15:00Z
+completedAt: 2026-05-27T00:20:00Z
+pr: https://github.com/colin-prologue/AgentTest/pull/4
 dependsOn: [task-002-sqlite-events-schema]
 ---
 
@@ -28,3 +30,6 @@ This task delivers the worker as an **importable module**; the CLI wrapper that 
 - [ ] Test cleans up `events/test-ingest.jsonl` after running.
 
 ## Notes
+
+- 2026-05-27: approved by reviewer. All 9 acceptance criteria met; 10 vitest tests pass (5 db + 5 ingest), typecheck clean. Review file: `tasks/task-003-review.md`. Verdict posted to PR #4 as `--comment` review (account constraint — cannot self-approve).
+- 2026-05-27: tester re-verified on PR branch at commit `b9d59ba` (`npm install --prefix dashboard && npm test` → vitest 10/10 pass in 4.92s; `npm run typecheck --prefix dashboard` clean). All 9 acceptance criteria checked against code. Merged PR #4 to `claude/ecstatic-gates-oHkEg` via `gh pr merge --squash --delete-branch`; merge commit `90f800e`. See `tasks/task-003-verified.md`.
