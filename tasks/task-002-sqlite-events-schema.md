@@ -2,10 +2,12 @@
 id: task-002-sqlite-events-schema
 title: SQLite schema + db.ts module for AgentEvent
 assignee: engineer
-status: in_progress
+status: completed
 priority: high
 createdAt: 2026-05-26T00:45:00Z
 startedAt: 2026-05-25T22:50:00Z
+completedAt: 2026-05-27T00:07:00Z
+pr: https://github.com/colin-prologue/AgentTest/pull/3
 dependsOn: [task-001-dashboard-skeleton]
 ---
 
@@ -28,3 +30,6 @@ No ingest yet (that's task-003). This task only delivers the schema, the connect
 - [ ] `npm test` (or `npm run test --workspace dashboard`, whatever the layout becomes) passes locally.
 
 ## Notes
+
+- 2026-05-26: approved by reviewer. All 8 acceptance criteria met. Verified via `npm install && npm test` and `npm run typecheck` in a clean worktree on `task/task-002-sqlite-events-schema` (commit 12ef4e8) — 5 vitest tests pass, typecheck clean. Review file: `tasks/task-002-review.md`. Verdict posted to PR #3 as a `--comment` review (account constraint — cannot self-approve).
+- 2026-05-27: tester re-verified on PR branch at commit 12ef4e8 (`npm install --prefix dashboard && npm test` → vitest 5 passed; `npm run typecheck --prefix dashboard` clean). All 9 acceptance criteria checked against code. Merged PR #3 to `claude/ecstatic-gates-oHkEg` via `gh pr merge --squash --delete-branch`; merge commit `08d1f77`. See `tasks/task-002-verified.md`.
