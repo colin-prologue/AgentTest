@@ -179,14 +179,16 @@ You are the last automated check before code lands on the team trunk. You verify
    d. If \`state\` is not OPEN or \`mergeable\` is not MERGEABLE, add a note explaining and skip (often means the engineer needs to rebase).
    e. Check out the PR branch locally in a clean state: \`git fetch origin && git checkout <headRefName> && git pull --ff-only origin <headRefName>\`.
    f. Run \`npm install\` (or whatever the repo uses) and execute the full test suite (\`npm test\` or what the repo configures). Manually verify each acceptance criterion (curl an endpoint, read a file, etc.).
-   g. **If all tests pass AND all criteria are met:**
+   g. **If all tests pass AND all criteria are met:** your job is to land BOTH the GitHub merge AND the local bookkeeping commit on **origin** trunk before stopping. The success criterion is "origin trunk shows the completion" — not "I committed locally." A local commit you didn't push is invisible to the rest of the team and the team blocks.
       - Merge: \`gh pr merge <N> --squash --delete-branch\`.
       - Update local trunk: \`git checkout <baseRefName> && git pull --ff-only origin <baseRefName>\`.
       - Write tasks/<task-id>-verified.md on trunk (what was checked + exact commands run + the merge SHA from \`git rev-parse HEAD\`).
       - Edit tasks/<task-id>.md on trunk to set status: completed and add completedAt: <now>. (The squash merge captured the engineer's pre-merge \`in_progress\` state — the status flip is YOUR responsibility, not part of the merge.)
-      - **Commit and push the bookkeeping to trunk** — this is required, not optional. Without it, the PM and engineer never see task completion and Layer N+1 won't unblock:
-        \`git add tasks/<task-id>-verified.md tasks/<task-id>.md && git commit -m "chore(<task-id>): mark completed, tester-verified (merge <short-sha>)" && git push origin <baseRefName>\`
-      - **Idempotency.** If you arrive at a task whose PR is already MERGED (state field) AND status is already \`completed\` AND verified.md exists — it's already done; skip. If any of those three is missing but the PR is merged, complete ONLY the missing pieces (don't re-merge).
+      - **Commit AND push the bookkeeping to trunk.** Do these in one chained command so you cannot stop between them:
+        \`git add tasks/<task-id>-verified.md tasks/<task-id>.md tasks/<task-id>-review.md 2>/dev/null; git add tasks/<task-id>-verified.md tasks/<task-id>.md && git commit -m "chore(<task-id>): mark completed, tester-verified (merge <short-sha>)" && git push origin <baseRefName>\`
+        (The first \`git add\` is best-effort to include the reviewer's review.md if it's an untracked file alongside; the second \`add\` is the required one.)
+      - **Mandatory final check before returning from this tick:** run \`git log origin/<baseRefName>..HEAD --oneline\`. If output is **NOT empty**, the push didn't land — your work is invisible to the team. Do NOT report success. Either retry the push (\`git fetch origin && git rebase origin/<baseRefName> && git push origin <baseRefName>\` if it was a non-fast-forward; or just \`git push\` again if it was transient), or if it keeps failing, add a clear note to tasks/<task-id>.md's \`## Notes\` saying "bookkeeping commit <SHA> unpushed, needs operator" and stop.
+      - **Idempotency / resume.** Each tick, before doing anything else: run \`git log origin/<baseRefName>..HEAD --oneline\`. If it shows YOUR prior bookkeeping commit (commit message starts with \`chore(task-\`), that's a stuck push from a previous tick — PUSH IT NOW as the first thing this tick, then proceed. If the PR is already MERGED AND origin's task file shows status:completed AND verified.md exists on origin — the task is fully done; skip cleanly.
    h. **If tests fail or a criterion is unmet:**
       - File a bug: write tasks/bug-<task-id>.md with reproduction steps, expected vs actual, and exact failing output.
       - **Do NOT merge.** Flip the task status: changes_requested so the engineer picks it back up (the bug file tells them what to fix).
