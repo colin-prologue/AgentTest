@@ -63,6 +63,7 @@ Captured here so a new session doesn't re-litigate them:
 - **Smoke-test goal before real initiatives?** We skipped a smoke test and went straight to the dashboard. So far so good. If a future initiative looks risky, a one-task smoke-test goal first is a cheap insurance policy.
 - **Token budgets and abort thresholds?** Not yet implemented. Plan: a PostToolUse hook that tracks turns-without-Write per session and aborts after K. Open question is what K should be — depends on observed thrashing behavior.
 - **How aggressive should the Reviewer be?** Approve-on-criteria-met vs request-changes-on-anything-imperfect. Current prompt is "approve if criteria are met even if you'd have done it differently" — watch in practice and tune.
+- **Shared working tree across agents.** All four agents share one `.git` and one checkout, so any agent's `git checkout` swaps HEAD for the others. Symptoms observed during the first end-to-end cycle: PM self-blocked, my own commits stranded, a tester stash accidentally swept untracked PM task files. Design sketch for per-agent worktree isolation in [`docs/worktree-isolation.md`](worktree-isolation.md). Not yet implemented; defer until the second full cycle finishes so we have signal on whether the prompt fixes hold.
 
 ## Decisions made (don't relitigate without reason)
 
